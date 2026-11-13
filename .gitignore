@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+.env.*
+
+# Logs
+*.log
+
+# Cursor (local IDE — not versioned)
+.cursor/

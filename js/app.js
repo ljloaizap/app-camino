@@ -104,6 +104,55 @@
     });
   }
 
+  const MOBILE_VIEW = window.matchMedia('(max-width: 899px)');
+
+  function bindSwipe(zone, onPrev, onNext) {
+    if (!zone) return () => {};
+
+    const THRESHOLD = 52;
+    const AXIS_RATIO = 1.25;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    function isInteractive(target) {
+      return target.closest('a, button, input, textarea, select, label, [data-reveal], dialog');
+    }
+
+    function onStart(event) {
+      if (!MOBILE_VIEW.matches || event.touches.length !== 1) return;
+      if (isInteractive(event.target)) return;
+      tracking = true;
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+    }
+
+    function onEnd(event) {
+      if (!tracking) return;
+      tracking = false;
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      if (Math.abs(dx) < THRESHOLD || Math.abs(dx) <= Math.abs(dy) * AXIS_RATIO) return;
+      if (dx > 0) onPrev();
+      else onNext();
+    }
+
+    function onCancel() {
+      tracking = false;
+    }
+
+    zone.addEventListener('touchstart', onStart, { passive: true });
+    zone.addEventListener('touchend', onEnd, { passive: true });
+    zone.addEventListener('touchcancel', onCancel, { passive: true });
+
+    return () => {
+      zone.removeEventListener('touchstart', onStart);
+      zone.removeEventListener('touchend', onEnd);
+      zone.removeEventListener('touchcancel', onCancel);
+    };
+  }
+
   function animateIn(node) {
     if (reduceMotion.matches || !node.animate) return;
     node.animate(
@@ -160,7 +209,7 @@
     const spread = document.getElementById('spread');
     const prev = document.getElementById('pager-prev');
     const next = document.getElementById('pager-next');
-    const nextLabel = next.querySelector('[data-label]');
+    const nextHint = next.querySelector('[data-label]');
     const status = document.getElementById('pager-status');
     const desktop = window.matchMedia('(min-width: 900px)');
     const total = C.leaves.length;
@@ -180,7 +229,10 @@
 
       const isLast = current + step() >= total;
       prev.disabled = current === 0;
-      nextLabel.textContent = isLast ? 'Despedida' : 'Siguiente';
+      const nextLabel = isLast ? 'Despedida' : 'Siguiente';
+      if (nextHint) nextHint.textContent = nextLabel;
+      next.setAttribute('aria-label', isLast ? 'Ir a la despedida' : 'Hoja siguiente');
+      prev.setAttribute('aria-label', current === 0 ? 'Primera hoja' : 'Hoja anterior');
 
       const last = Math.min(current + step(), total);
       status.textContent =
@@ -210,8 +262,20 @@
     };
     desktop.addEventListener('change', onViewportChange);
 
+    const book = document.querySelector('.credential__book');
+    const unswipe = bindSwipe(
+      book,
+      () => {
+        if (!prev.disabled) prev.click();
+      },
+      () => next.click()
+    );
+
     render(false);
-    return () => desktop.removeEventListener('change', onViewportChange);
+    return () => {
+      desktop.removeEventListener('change', onViewportChange);
+      unswipe();
+    };
   }
 
   /* ---------- Stamp index ---------- */
@@ -347,31 +411,41 @@
     ]);
   }
 
-  function pagerLink(dir, href, label, detail) {
-    return el('a', { class: 'btn', href, rel: dir, 'data-pager': dir }, [
-      dir === 'prev' ? el('span', { 'aria-hidden': 'true', text: '←' }) : null,
-      el('span', null, [label, detail ? el('small', { text: ` · ${detail}` }) : null]),
-      dir === 'next' ? el('span', { 'aria-hidden': 'true', text: '→' }) : null,
-    ]);
+  function stampEdge(dir, href, ariaLabel) {
+    return el(
+      'a',
+      {
+        class: `pager-edge pager-edge--${dir}`,
+        href,
+        rel: dir,
+        'data-pager': dir,
+        'aria-label': ariaLabel,
+      },
+      [
+        el('span', { class: 'pager-edge__icon', 'aria-hidden': 'true', text: dir === 'prev' ? '←' : '→' }),
+        el('span', { class: 'visually-hidden', text: ariaLabel }),
+      ]
+    );
   }
 
-  function stampPager(id) {
+  function stampShell(sheet, id) {
     const leafHref = `credential.html?leaf=${leafOf(id) + 1}`;
-    const prev =
-      id > 1
-        ? pagerLink('prev', `stamp.html?id=${id - 1}`, 'Anterior', `Sello ${pad(id - 1)}`)
-        : pagerLink('prev', leafHref, 'Credencial');
-    const next =
-      id < C.TOTAL_STAMPS
-        ? pagerLink('next', `stamp.html?id=${id + 1}`, 'Siguiente', `Sello ${pad(id + 1)}`)
-        : pagerLink('next', 'farewell.html', 'Despedida');
-    return el('nav', { class: 'pager', 'aria-label': 'Navegación entre sellos' }, [
-      prev,
-      el('div', { class: 'pager__center' }, [
-        el('a', { class: 'btn btn--quiet', href: leafHref, text: 'Volver a la credencial' }),
-        el('a', { class: 'btn btn--quiet', href: 'stamp-index.html', text: 'Índice' }),
+    const prevHref = id > 1 ? `stamp.html?id=${id - 1}` : leafHref;
+    const nextHref = id < C.TOTAL_STAMPS ? `stamp.html?id=${id + 1}` : 'farewell.html';
+    const prevAria = id > 1 ? `Sello anterior (${pad(id - 1)})` : 'Volver a la credencial';
+    const nextAria = id < C.TOTAL_STAMPS ? `Sello siguiente (${pad(id + 1)})` : 'Ir a la despedida';
+
+    return el('div', { class: 'stamp__viewer' }, [
+      stampEdge('prev', prevHref, prevAria),
+      el('div', { class: 'stamp__book' }, [
+        sheet,
+        el('p', { class: 'stamp__status pager__status', text: `Sello ${pad(id)} de ${pad(C.TOTAL_STAMPS)}` }),
+        el('nav', { class: 'stamp__links', 'aria-label': 'Atajos del sello' }, [
+          el('a', { class: 'btn btn--quiet', href: leafHref, text: 'Volver a la credencial' }),
+          el('a', { class: 'btn btn--quiet', href: 'stamp-index.html', text: 'Índice' }),
+        ]),
       ]),
-      next,
+      stampEdge('next', nextHref, nextAria),
     ]);
   }
 
@@ -392,7 +466,17 @@
     const stamp = getStamp(id);
     const layout = stamp.status === 'ready' ? LAYOUTS[stamp.layout] : null;
     document.title = `Sello ${pad(id)} · ${stamp.title} — Mi Camino de Santiago`;
-    root.replaceChildren(layout ? layout(stamp) : pendingSheet(stamp), stampPager(id));
+    const shell = stampShell(layout ? layout(stamp) : pendingSheet(stamp), id);
+    root.replaceChildren(shell);
+
+    const book = shell.querySelector('.stamp__book');
+    const prevEdge = shell.querySelector('.pager-edge--prev');
+    const nextEdge = shell.querySelector('.pager-edge--next');
+    bindSwipe(
+      book,
+      () => prevEdge && prevEdge.click(),
+      () => nextEdge && nextEdge.click()
+    );
   }
 
   /* ---------- Album ---------- */

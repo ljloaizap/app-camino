@@ -585,6 +585,120 @@ main:focus {
 
 /* ---------- Credential ---------- */
 
+.credential__viewer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.25rem, 2vw, 1rem);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.credential__book {
+  min-width: 0;
+}
+
+.credential__status {
+  margin: 0.65rem 0 0;
+  text-align: center;
+}
+
+.pager-edge {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  color: var(--blue);
+  background: var(--ivory);
+  border: 1.5px solid rgba(38, 63, 86, 0.35);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px -4px rgba(38, 63, 86, 0.35);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.pager-edge__icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.pager-edge:hover {
+  color: var(--ivory);
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+.pager-edge:active {
+  transform: scale(0.96);
+}
+
+.pager-edge[disabled] {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pager-edge[disabled]:hover {
+  color: var(--blue);
+  background: var(--ivory);
+  border-color: rgba(38, 63, 86, 0.35);
+}
+
+@media (min-width: 900px) {
+  .credential__viewer {
+    align-items: stretch;
+  }
+
+  .pager-edge {
+    align-self: center;
+    width: 3.1rem;
+    height: 3.1rem;
+  }
+}
+
+.page--credential,
+.page--stamp {
+  padding-bottom: 1.75rem;
+}
+
+.stamp__viewer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.25rem, 2vw, 1rem);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.stamp__book {
+  min-width: 0;
+}
+
+.stamp__status {
+  margin: 0.65rem 0 0;
+  text-align: center;
+}
+
+.stamp__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.85rem;
+}
+
+@media (min-width: 900px) {
+  .stamp__viewer {
+    align-items: stretch;
+  }
+
+  .stamp__viewer .pager-edge {
+    align-self: center;
+  }
+}
+
 .spread {
   display: grid;
   grid-template-columns: 1fr;
@@ -641,6 +755,11 @@ main:focus {
 @media (max-width: 899px) {
   .leaf {
     min-height: auto;
+  }
+
+  .credential__book,
+  .stamp__book {
+    touch-action: pan-y;
   }
 }
 
