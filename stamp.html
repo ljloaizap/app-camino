@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sello — Mi Camino de Santiago</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lato:wght@400;700&display=swap"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body data-page="stamp">
+    <aside class="sound-dock" data-persist aria-label="Sonido ambiental">
+      <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">
+        <svg class="sound-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+          <path class="sound-toggle__wave" d="M15.5 8.5a5 5 0 0 1 0 7" />
+          <path class="sound-toggle__wave" d="M18.5 5.5a9 9 0 0 1 0 13" />
+          <path class="sound-toggle__off" d="m16 9 5 6m0-6-5 6" />
+        </svg>
+        <span class="sound-toggle__label" data-sound-label>Activar sonido</span>
+      </button>
+    </aside>
+
+    <header class="site-header">
+      <a class="brand" href="index.html"><span class="brand__shell" data-art="shell" data-art-label=""></span>Mi Camino de Santiago</a>
+      <nav class="site-nav" aria-label="Principal">
+        <ul>
+          <li><a href="credential.html">Credencial</a></li>
+          <li><a href="stamp-index.html">Índice</a></li>
+          <li><a href="album.html">Recuerdos</a></li>
+          <li><a href="farewell.html">Despedida</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main" class="page">
+      <div id="stamp-root"></div>
+    </main>
+
+    <script src="js/art.js" defer></script>
+    <script src="js/album.js" defer></script>
+    <script src="js/stamps.js" defer></script>
+    <script src="js/app.js" defer></script>
+    <script src="js/music.js" defer></script>
+  </body>
+</html>
