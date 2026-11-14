@@ -20,7 +20,113 @@
       '<path d="M4 21.5h16"/><path d="M8 7h4M8 10.5h4"/>',
     arrow: '<path d="M3 12h15"/><path d="M13 6l6 6-6 6"/>',
     heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a3 3 0 0 1 5.2 2c0 2-3 2-3 4"/><path d="M12 17h.01"/>',
+    cross: '<path d="M12 4v16M8 8h8"/><path d="M5 21h14"/>',
+    coin: '<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5h4a2 2 0 1 1 0 4h-2"/>',
+    pack: '<path d="M8 8h8l3 3v10H5V11l3-3Z"/><path d="M9 8v4h6V8"/>',
+    map: '<path d="M4 6l6-2 4 2 6-2v14l-6 2-4-2-6 2Z"/><path d="M10 4v14M14 6v14"/>',
+    shell:
+      '<path d="M12 20c-4-3.5-7-7-7-10a7 7 0 0 1 14 0c0 3-3 6.5-7 10Z"/><path d="M12 10v10M8 13l4-3 4 3"/>',
+    patch: '<rect x="5" y="9" width="14" height="8" rx="2"/><path d="M9 9V7h6v2"/><path d="M12 13v2"/>',
+    staff: '<path d="M9 21V5l6-2v18"/><path d="M15 6a2 2 0 1 1 0 4"/>',
+    church: '<path d="M12 3v5M8 7h8"/><path d="M6 9h12v12H6z"/><path d="M10 13h4v8h-4z"/>',
+    book: '<path d="M5 5h14v16H5z"/><path d="M9 5v16M5 9h4"/>',
+    scroll: '<path d="M6 5h12v14H6z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    censer: '<path d="M12 3v4"/><path d="M8 7h8l-2 14H10z"/><path d="M10 11h4"/>',
+    camera: '<path d="M5 8h3l2-2h4l2 2h3v11H5z"/><circle cx="12" cy="13" r="3"/>',
+    people: '<circle cx="9" cy="9" r="2.5"/><circle cx="15" cy="10" r="2.5"/><path d="M5 19c.5-3 3-5 7-5s6.5 2 7 5"/>',
+    globe: '<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4a12 12 0 0 1 0 16M12 4a12 12 0 0 0 0 16"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/>',
+    mountain: '<path d="M4 19h16M7 19l5-9 4 7 3-5"/>',
+    chat: '<path d="M5 6h14v10H9l-4 3z"/><path d="M8 11h8"/>',
+    home: '<path d="M4 11 12 4l8 7v9H4z"/><path d="M10 20v-6h4v6"/>',
+    star: '<path d="M12 3l2.4 6.6L21 11l-5.4 2.4L12 20l-3.6-6.6L3 11l6.6-1.4z"/>',
+    steps: '<path d="M4 19h16"/><path d="M6 15h4v4H6zM10 11h4v8h-4zM14 7h4v12h-4z"/>',
+    leaf: '<path d="M12 21c-4-4-5-9-3-13 4 0 7 2 9 6-5 2-8 4-6 7z"/>',
   };
+
+  const CHAPTER_COLORS = [
+    ['quejeso', 'blue'],
+    ['preparando', 'olive'],
+    ['el camino', 'terra'],
+    ['símbolos', 'blue'],
+    ['meta', 'terra'],
+    ['amigos', 'olive'],
+    ['experiencias', 'blue'],
+    ['epílogo', 'charcoal'],
+    ['epilogo', 'charcoal'],
+  ];
+
+  const MOTIF_RULES = [
+    [/vieira|concha/i, 'shell'],
+    [/flecha/i, 'arrow'],
+    [/día\s*\d|dia\s*\d/i, 'arrow'],
+    [/mochila|equipaje/i, 'pack'],
+    [/itinerario|etapa|sarria|portomarín|melide|arzúa|pedrouzo/i, 'map'],
+    [/económica|presupuesto|gastos/i, 'coin'],
+    [/física|mental|espiritual|entrenamiento/i, 'boot'],
+    [/curita|tirita/i, 'patch'],
+    [/bastón|baston/i, 'staff'],
+    [/catedral|misa|botafumeiro/i, 'church'],
+    [/compostela|credencial/i, 'scroll'],
+    [/misa/i, 'censer'],
+    [/turisteando|foto/i, 'camera'],
+    [/japon|lady|amigos|personas/i, 'people'],
+    [/mundo/i, 'globe'],
+    [/reflexiones|belleza|vida/i, 'leaf'],
+    [/desafío|desafios/i, 'mountain'],
+    [/anécdota|curiosidades/i, 'chat'],
+    [/regreso|casa/i, 'home'],
+    [/permanece/i, 'heart'],
+    [/santiago|camino de santiago/i, 'shell'],
+    [/quién es|quien es/i, 'cross'],
+    [/qué es|que es/i, 'help'],
+    [/equipaje/i, 'pack'],
+  ];
+
+  const MOTIF_SHAPES = ['circle', 'rect', 'scallop'];
+
+  function chapterColor(chapter) {
+    const key = String(chapter || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '');
+    const hit = CHAPTER_COLORS.find(([frag]) => key.includes(frag));
+    return hit ? hit[1] : 'blue';
+  }
+
+  function pickIcon(title, chapter) {
+    const text = `${title} ${chapter}`;
+    const rule = MOTIF_RULES.find(([re]) => re.test(text));
+    return rule ? rule[1] : 'star';
+  }
+
+  function stampTag(title) {
+    const clean = String(title).replace(/[""«»]/g, '').trim();
+    const word = clean.split(/[\s(–—-]/)[0] || clean;
+    return word.length > 12 ? `${word.slice(0, 11)}…` : word;
+  }
+
+  function pad2(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function motifForStamp(meta) {
+    const id = meta.id;
+    const shape = MOTIF_SHAPES[(id - 1) % MOTIF_SHAPES.length];
+    const color = chapterColor(meta.chapter);
+    const iconName = pickIcon(meta.title, meta.chapter);
+    const top = stampTag(meta.title);
+    const day = meta.title.match(/día\s*(\d+)/i);
+    return {
+      shape,
+      icon: iconName,
+      top,
+      bottom: `Sello ${pad2(id)}`,
+      label: day ? `Día ${day[1]}` : stampTag(meta.title),
+      color,
+    };
+  }
 
   const INK_DEFS =
     '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false" data-persist><defs>' +
@@ -198,5 +304,5 @@
     });
   }
 
-  C.art = { stamp, shell, hydrate, ensureDefs };
+  C.art = { stamp, shell, hydrate, ensureDefs, motifForStamp };
 })();

@@ -55,23 +55,64 @@
     return chapters;
   }
 
-  function parseLeaves(md, catalog, chapters) {
-    const rows = parseTable(md, '### Hojas');
-    if (!rows) return chapters.map((ch) => [...ch.stamps]);
+  /**
+   * Pack one chapter into credential leaves (2–4 stamps each; never mix chapters).
+   * Leaf counts stay as equal as possible; if N does not divide evenly, earlier leaves get the extras.
+   */
+  function packChapter(stamps, min = 2, max = 4) {
+    const n = stamps.length;
+    if (n === 0) return [];
+    if (n <= max) return [stamps.slice()];
 
-    const byChapter = new Map();
-    rows.forEach((row) => {
-      if (!byChapter.has(row.chapter)) byChapter.set(row.chapter, []);
-      byChapter.get(row.chapter).push(row.id);
-    });
+    const candidates = [];
+    const kMin = Math.ceil(n / max);
+    const kMax = Math.floor(n / min);
+
+    for (let k = kMin; k <= kMax; k += 1) {
+      const base = Math.floor(n / k);
+      const extra = n % k;
+      const hi = extra > 0 ? base + 1 : base;
+      if (base < min || hi > max) continue;
+
+      const sizes = Array.from({ length: k }, (_, i) => (i < extra ? base + 1 : base));
+      if (!sizes.every((s) => s >= min && s <= max)) continue;
+
+      const spread = Math.max(...sizes) - Math.min(...sizes);
+      candidates.push({ sizes, spread, k });
+    }
+
+    let sizes;
+    if (candidates.length) {
+      candidates.sort((a, b) => a.spread - b.spread || a.k - b.k);
+      sizes = candidates[0].sizes;
+    } else {
+      sizes = [];
+      let i = 0;
+      while (i < n) {
+        const rest = n - i;
+        let size = Math.min(max, rest);
+        if (rest > max && rest - size === 1) size = 3;
+        sizes.push(size);
+        i += size;
+      }
+    }
 
     const leaves = [];
-    chapters.forEach((ch) => {
-      const pack = byChapter.get(ch.title);
-      if (pack && pack.length) leaves.push(pack);
-      else leaves.push([...ch.stamps]);
+    let offset = 0;
+    sizes.forEach((size) => {
+      leaves.push(stamps.slice(offset, offset + size));
+      offset += size;
     });
     return leaves;
+  }
+
+  function parseLeaves(md, catalog) {
+    const rows = parseTable(md, '### Hojas');
+    if (rows) {
+      const chapters = buildChapters(rows);
+      return chapters.flatMap((ch) => packChapter(ch.stamps));
+    }
+    return buildChapters(catalog).flatMap((ch) => packChapter(ch.stamps));
   }
 
   function applyCatalog(catalog, leaves) {
@@ -90,8 +131,7 @@
     const catalog = parseTable(md);
     if (!catalog || !catalog.length) throw new Error('content.md: no stamp table found');
 
-    const chapters = buildChapters(catalog);
-    const leaves = parseLeaves(md, catalog, chapters);
+    const leaves = parseLeaves(md, catalog);
     applyCatalog(catalog, leaves);
   }
 

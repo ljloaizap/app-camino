@@ -31,7 +31,9 @@ css/
   styles.css            # tokens, textura papel, layout, componentes, responsive, a11y
 js/
   app.js                # navegación, render de vistas, revelar/ocultar reutilizable
-  stamps.js             # capítulos, hojas (leaves), contenido completo solo 05 y 13
+  content.md            # capítulos y títulos de sellos (fuente única)
+  content.js            # carga y parse de content.md
+  stamps.js             # stampPages: layouts solo para sellos con página desarrollada
   album.js              # categorías y fotos del álbum
   art.js                # sellos gráficos y vieira en SVG
   music.js              # YouTube ambiental, play/mute, sin autoplay, manejo de errores
@@ -134,7 +136,7 @@ Nombres de archivos, código, clases, ids y comentarios en inglés. Español sol
 ## Puntos abiertos (confirmar con la propietaria)
 
 1. Copy de UI en español (asumido sí).
-2. Lista definitiva de capítulos para los 31 sellos (hasta entonces: agrupación provisional).
+2. Capítulos y títulos: editar `content.md` (incl. Experiencias, Epílogo, sellos 26–31).
 3. Fotos reales en `assets/photos/` cuando estén disponibles.
 
 ## Criterios de aceptación (resumen)

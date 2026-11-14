@@ -42,20 +42,37 @@
 
   function getStamp(id) {
     const meta = C.catalogMeta && C.catalogMeta(id);
-    const title = meta ? meta.title : 'Contenido pendiente';
+    if (!meta) return { id, status: 'pending', title: 'Este sello no existe' };
+
+    const title =
+      C.isPendingTitle && C.isPendingTitle(meta.title) ? 'Contenido pendiente' : meta.title;
     const page = C.stampPages && C.stampPages[id];
+    const motif = C.art.motifForStamp(meta);
+
     if (page && page.status === 'ready') {
       const stamp = Object.assign({ id, title, status: 'ready' }, page);
       if (stamp.layout === 'day' && !stamp.heading) stamp.heading = title;
-      if (stamp.art) {
-        stamp.art = Object.assign({}, stamp.art, {
-          bottom: stamp.art.bottom === 'Sello' ? `Sello ${pad(id)}` : stamp.art.bottom,
-        });
-      }
+      stamp.art = Object.assign({}, motif, stamp.art, {
+        bottom: stamp.art.bottom === 'Sello' ? `Sello ${pad(id)}` : stamp.art.bottom || motif.bottom,
+      });
       return stamp;
     }
-    const pendingLabel = C.isPendingTitle && C.isPendingTitle(title) ? 'Contenido pendiente' : title;
-    return { id, status: 'pending', title: pendingLabel };
+
+    const ratios = ['landscape', 'portrait', 'square', 'panorama'];
+    return {
+      id,
+      title,
+      status: 'ready',
+      layout: 'stub',
+      art: motif,
+      photo: {
+        src: null,
+        alt: '',
+        ratio: ratios[(id - 1) % ratios.length],
+        label: 'Fotografía',
+      },
+      body: '[Contenido pendiente]',
+    };
   }
 
   const rotation = (id) => ((id * 37) % 11) - 5;
@@ -180,20 +197,17 @@
 
   function slot(id) {
     const stamp = getStamp(id);
-    if (stamp.status === 'ready') {
-      return el('li', { class: 'slot slot--ready' }, [
-        el('a', { class: 'slot__link', href: `stamp.html?id=${id}` }, [
-          el('span', { class: 'slot__num', text: pad(id) }),
-          stampArt(stamp, 'slot__art'),
-          el('span', { class: 'slot__title', text: stamp.title }),
-        ]),
-      ]);
-    }
-    return el('li', { class: 'slot slot--pending' }, [
-      el('div', { class: 'slot__inner' }, [
-        stampArt(stamp, 'slot__art'),
-        el('span', { class: 'slot__title', text: 'Pendiente' }),
-      ]),
+    return el('li', { class: `slot${stamp.status === 'ready' ? ' slot--ready' : ' slot--pending'}` }, [
+      stamp.status === 'ready'
+        ? el('a', { class: 'slot__link', href: `stamp.html?id=${id}` }, [
+            el('span', { class: 'slot__num', text: pad(id) }),
+            stampArt(stamp, 'slot__art'),
+            el('span', { class: 'slot__title', text: stamp.title }),
+          ])
+        : el('div', { class: 'slot__inner' }, [
+            stampArt(stamp, 'slot__art'),
+            el('span', { class: 'slot__title', text: stamp.title }),
+          ]),
     ]);
   }
 
@@ -309,9 +323,11 @@
               el('span', { class: 'index__title', text: stamp.title }),
               el('span', { class: 'index__status', text: stamp.status === 'ready' ? 'Abrir' : 'Pendiente' }),
             ];
+            const isStub = stamp.layout === 'stub';
+            content[2].textContent = stamp.status === 'ready' ? (isStub ? 'Borrador' : 'Abrir') : 'Pendiente';
             return el('li', null, [
               stamp.status === 'ready'
-                ? el('a', { class: 'index__item', href: `stamp.html?id=${id}` }, content)
+                ? el('a', { class: `index__item${isStub ? ' is-draft' : ''}`, href: `stamp.html?id=${id}` }, content)
                 : el('div', { class: 'index__item is-pending' }, content),
             ]);
           })
@@ -362,6 +378,18 @@
             ),
           ]),
         ]),
+      ]);
+    },
+
+    stub(stamp) {
+      const titleId = 'stamp-title';
+      return el('article', { class: 'sheet paper layout-stub', 'aria-labelledby': titleId }, [
+        el('header', { class: 'sheet__head layout-stub__head' }, [
+          stampArt(stamp, 'sheet__stamp layout-stub__stamp'),
+          ...sheetHeader(stamp, titleId, stamp.title),
+        ]),
+        photo(stamp.photo, 'layout-stub__photo'),
+        el('p', { class: 'layout-stub__body prose', text: stamp.body }),
       ]);
     },
 

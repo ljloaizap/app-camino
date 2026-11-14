@@ -222,7 +222,7 @@ Buscar un equilibrio entre legibilidad y simplicidad.
 
 No quiero un único HTML gigantesco con todo embebido, pero tampoco una arquitectura empresarial fragmentada en decenas de archivos.
 
-Puede usarse **varias páginas HTML** (por ejemplo portada, credencial, índice, plantilla de sello, álbum, despedida) si mantiene los archivos legibles. El contenido de los 31 sellos debe vivir en datos (`stamps.js` o archivos de contenido), no duplicado como marcado masivo en HTML.
+Puede usarse **varias páginas HTML** (por ejemplo portada, credencial, índice, plantilla de sello, álbum, despedida) si mantiene los archivos legibles. El contenido de los 31 sellos debe vivir en `content.md` (capítulos y títulos) y, por sello desarrollado, en `js/stamps.js` (`stampPages`), sin duplicar como marcado masivo en HTML.
 
 Como punto de partida, considerar:
 

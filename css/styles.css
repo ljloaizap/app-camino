@@ -1306,6 +1306,37 @@ a.index__item .index__title {
   border-radius: 3px;
 }
 
+/* Stamp layout: stub (placeholder page) */
+
+.layout-stub__head {
+  text-align: center;
+}
+
+.layout-stub__stamp {
+  float: none;
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+.layout-stub__photo {
+  max-width: 520px;
+  margin: 0 auto 1.5rem;
+}
+
+.layout-stub__body {
+  max-width: 42ch;
+  margin: 0 auto;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.index__item.is-draft .index__status {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
 /* Stamp layout: pending */
 
 .layout-pending {
