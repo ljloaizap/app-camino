@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Mi Camino de Santiago — styles
+   El Camino de Santiago — styles
    ========================================================================== */
 
 :root {
@@ -661,6 +661,17 @@ main:focus {
 .page--credential,
 .page--stamp {
   padding-bottom: 1.75rem;
+}
+
+.content-error {
+  max-width: 40rem;
+  margin: 1rem auto;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  background: rgba(166, 83, 61, 0.12);
+  border-left: 3px solid var(--terra);
+  border-radius: 3px;
 }
 
 .stamp__viewer {

@@ -33,7 +33,7 @@ La visitante debe sentir que está explorando una credencial real que alguien ut
 
 - Mostrar inicialmente la credencial cerrada.
 - Debe tener una apariencia física, como una pequeña libreta de peregrino.
-- Incluir el título «Mi Camino de Santiago».
+- Incluir el título «El Camino de Santiago».
 - Incorporar una vieira como elemento gráfico central.
 - Tener un botón «Abrir la credencial del peregrino».
 - Al pulsarlo, mostrar la credencial abierta.

@@ -41,9 +41,21 @@
   }
 
   function getStamp(id) {
-    const data = C.stamps[id];
-    if (data && data.status === 'ready') return Object.assign({ id }, data);
-    return { id, status: 'pending', title: 'Contenido pendiente' };
+    const meta = C.catalogMeta && C.catalogMeta(id);
+    const title = meta ? meta.title : 'Contenido pendiente';
+    const page = C.stampPages && C.stampPages[id];
+    if (page && page.status === 'ready') {
+      const stamp = Object.assign({ id, title, status: 'ready' }, page);
+      if (stamp.layout === 'day' && !stamp.heading) stamp.heading = title;
+      if (stamp.art) {
+        stamp.art = Object.assign({}, stamp.art, {
+          bottom: stamp.art.bottom === 'Sello' ? `Sello ${pad(id)}` : stamp.art.bottom,
+        });
+      }
+      return stamp;
+    }
+    const pendingLabel = C.isPendingTitle && C.isPendingTitle(title) ? 'Contenido pendiente' : title;
+    return { id, status: 'pending', title: pendingLabel };
   }
 
   const rotation = (id) => ((id * 37) % 11) - 5;
@@ -465,7 +477,7 @@
 
     const stamp = getStamp(id);
     const layout = stamp.status === 'ready' ? LAYOUTS[stamp.layout] : null;
-    document.title = `Sello ${pad(id)} · ${stamp.title} — Mi Camino de Santiago`;
+    document.title = `Sello ${pad(id)} · ${stamp.title} — El Camino de Santiago`;
     const shell = stampShell(layout ? layout(stamp) : pendingSheet(stamp), id);
     root.replaceChildren(shell);
 
@@ -622,13 +634,28 @@
     window.addEventListener('popstate', () => navigate(window.location.href, false));
   }
 
-  function init() {
+  function showContentError(message) {
+    const main = document.querySelector('main') || document.body;
+    const box = document.createElement('p');
+    box.className = 'content-error';
+    box.setAttribute('role', 'alert');
+    box.textContent = message;
+    main.prepend(box);
+  }
+
+  async function init() {
     initReveal();
     initKeyboardPager();
     initRouter();
+    try {
+      await C.loadContent();
+    } catch (err) {
+      showContentError('No se pudo cargar content.md. Comprueba que el archivo exista en el servidor.');
+      return;
+    }
     initPage();
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => init());
   else init();
 })();

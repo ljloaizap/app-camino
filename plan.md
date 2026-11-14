@@ -60,7 +60,7 @@ Nombres de archivos, código, clases, ids y comentarios en inglés. Español sol
 
 ### Fase B — Portada y credencial
 
-- Portada: credencial cerrada, «Mi Camino de Santiago», vieira central, CTA «Abrir la credencial del peregrino».
+- Portada: credencial cerrada, «El Camino de Santiago», vieira central, CTA «Abrir la credencial del peregrino».
 - Credencial abierta: navegación simple (transición, no simulación física de hojas).
 - Controles: anterior / siguiente, índice, volver a portada.
 
