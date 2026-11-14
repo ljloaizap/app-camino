@@ -22,6 +22,19 @@
  *     description: string[] o HTML (como `symbol`)
  *     senses?: string[] — etiquetas opcionales
  *     takeaway: { label?, text } — cierre de ese momento («Lo que me quedó»)
+ *
+ * layout `day` — etapas del Camino (capítulo El Camino):
+ *   date: fecha del día
+ *   heading: título editorial (si falta, usa el título del sello)
+ *   route: { from, to, distance } — origen, destino y km (el sello gráfico usa `art.from` / `art.to` si coinciden)
+ *   hero: foto panorámica del día
+ *   description: string[] o HTML — relato del día
+ *   highlights: { good?: { title?, items[] }, rough?: { title?, items[] } } — lo bueno y lo duro
+ *   moments: { title, items[] } — 2–4 momentos memorables (línea de tiempo)
+ *   facts: { label, value }[] — datos extra (alojamiento, clima, …)
+ *   map: { src, alt, ratio, label, caption? } opcional — captura de ruta (no mapa interactivo)
+ *   secret: foto + historia desplegable (sorpresa opcional)
+ *   art: { shape: 'jacobean', from, to, day, km, … } — sello tipo credencial
  */
 (function () {
   'use strict';
@@ -46,9 +59,10 @@
     },
 
     7: {
-      status: 'draft',
+      status: 'ready',
       layout: 'day',
-      date: '[Fecha pendiente]',
+      date: '24 de abril de 2026',
+      route: { from: 'Sarria', to: 'Portomarín', distance: '22 kms' },
       art: {
         shape: 'jacobean',
         color: 'terra',
@@ -58,7 +72,26 @@
         day: '1',
         km: 'K.111',
       },
-      hero: { src: null, alt: '', ratio: 'panorama', label: 'Fotografía panorámica del día' },
+      hero: { 
+        src: 'assets/photos/dia1.jpg', 
+        alt: '', 
+        ratio: 'panorama', 
+        label: 'Fotografía panorámica del día' 
+      },
+      description: [
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget lorem nisl. Mauris dui diam, faucibus quis ligula vel, tempor efficitur ante. Donec vulputate a sem sed rutrum. Mauris risus dui, volutpat id venenatis tincidunt, accumsan a enim. Duis auctor nibh vel eros rutrum euismod. Integer aliquet vel dolor quis malesuada. Nunc lectus lorem, pharetra non massa lobortis, porta vehicula erat.',
+        '(Párrafo opcional): Donec finibus iaculis eros vitae fermentum. Vestibulum dignissim nulla sit amet consectetur pharetra.]',
+      ],
+      highlights: {
+        good: {
+          title: 'Lo que brilló',
+          items: ['[Algo bueno de la etapa pendiente]', '[Otro detalle positivo pendiente]'],
+        },
+        rough: {
+          title: 'Lo que costó',
+          items: ['[Algo duro o incómodo pendiente]'],
+        },
+      },
       moments: {
         title: 'Momentos del día',
         items: [
@@ -68,11 +101,18 @@
         ],
       },
       facts: [
-        { label: 'Distancia', value: '[Pendiente]' },
-        { label: 'Recorrido', value: '[Pendiente]' },
         { label: 'Alojamiento', value: '[Pendiente]' },
-        { label: 'Anécdota', value: '[Pendiente]' },
+        { label: 'Clima', value: '[Pendiente]' },
+        { label: 'Compañía', value: '[Pendiente]' },
+        { label: 'Nota rápida', value: '[Pendiente]' },
       ],
+      map: {
+        src: null,
+        alt: '',
+        ratio: 'landscape',
+        label: 'Mapa o esquema de la ruta',
+        caption: '[Opcional: captura de Wikiloc, Google Maps o dibujo simple]',
+      },
       secret: {
         photo: { src: null, alt: '', ratio: 'square', label: 'Fotografía con historia' },
         button: 'Hay una historia detrás de esta foto',

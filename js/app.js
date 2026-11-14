@@ -363,11 +363,12 @@
               el('span', { class: 'index__status', text: stamp.status === 'ready' ? 'Abrir' : 'Pendiente' }),
             ];
             const isStub = stamp.layout === 'stub';
+            const openable = stamp.status === 'ready' && !isStub;
             content[2].textContent = stamp.status === 'ready' ? (isStub ? 'Borrador' : 'Abrir') : 'Pendiente';
             return el('li', null, [
-              stamp.status === 'ready'
-                ? el('a', { class: `index__item${isStub ? ' is-draft' : ''}`, href: `stamp.html?id=${id}` }, content)
-                : el('div', { class: 'index__item is-pending' }, content),
+              openable
+                ? el('a', { class: 'index__item', href: `stamp.html?id=${id}` }, content)
+                : el('div', { class: `index__item${isStub ? ' is-draft' : ' is-pending'}` }, content),
             ]);
           })
         ),
@@ -399,10 +400,7 @@
           ]),
         ]),
         el('div', { class: 'layout-prep__text' }, [
-          el('header', { class: 'sheet__head' }, [
-            stampArt(stamp, 'sheet__stamp'),
-            ...sheetHeader(stamp, titleId, stamp.editorialTitle, stamp.title),
-          ]),
+          el('header', { class: 'sheet__head' }, sheetHeader(stamp, titleId, stamp.editorialTitle, stamp.title)),
           el(
             'div',
             { class: 'prose' },
@@ -423,10 +421,7 @@
     stub(stamp) {
       const titleId = 'stamp-title';
       return el('article', { class: 'sheet paper layout-stub', 'aria-labelledby': titleId }, [
-        el('header', { class: 'sheet__head layout-stub__head' }, [
-          stampArt(stamp, 'sheet__stamp layout-stub__stamp'),
-          ...sheetHeader(stamp, titleId, stamp.title),
-        ]),
+        el('header', { class: 'sheet__head layout-stub__head' }, sheetHeader(stamp, titleId, stamp.title)),
         photo(stamp.photo, 'layout-stub__photo'),
         el('p', { class: 'layout-stub__body prose', text: stamp.body }),
       ]);
@@ -436,29 +431,85 @@
       const titleId = 'stamp-title';
       const storyId = 'stamp-story';
       const secret = stamp.secret;
-      return el('article', { class: 'sheet paper layout-day', 'aria-labelledby': titleId }, [
-        photo(stamp.hero, 'layout-day__hero'),
-        el('header', { class: 'sheet__head layout-day__head' }, [
-          stampArt(stamp, 'sheet__stamp'),
-          ...sheetHeader(stamp, titleId, stamp.heading),
-          el('p', { class: 'sheet__date', text: stamp.date }),
-        ]),
-        el('div', { class: 'layout-day__body' }, [
-          el('section', { class: 'moments', 'aria-labelledby': 'stamp-moments' }, [
-            el('h2', { id: 'stamp-moments', text: stamp.moments.title }),
-            el(
-              'ol',
-              null,
-              stamp.moments.items.map((t) => el('li', null, [el('p', { text: t })]))
-            ),
-          ]),
-          el('aside', { class: 'layout-day__aside', 'aria-label': 'Datos del día' }, [
-            el(
+      const route = stamp.route || {};
+      const art = stamp.art || {};
+      const from = route.from || art.from;
+      const to = route.to || art.to;
+      const distance = route.distance;
+
+      function highlightPanel(side, block) {
+        if (!block || !block.items || !block.items.length) return null;
+        const panelId = side === 'good' ? 'stamp-highlights-good' : 'stamp-highlights-rough';
+        return el('section', { class: `layout-day__highlights layout-day__highlights--${side}`, 'aria-labelledby': panelId }, [
+          el('h3', { id: panelId, text: block.title || (side === 'good' ? 'Lo que brilló' : 'Lo que costó') }),
+          el('ul', null, block.items.map((t) => el('li', { text: t }))),
+        ]);
+      }
+
+      const desc = stamp.description;
+      const descBlock = desc
+        ? Array.isArray(desc)
+          ? el('section', { class: 'layout-day__story prose', 'aria-labelledby': 'stamp-day-story' }, [
+              el('h2', { id: 'stamp-day-story', text: 'El día' }),
+              ...desc.map((t) => el('p', { text: t })),
+            ])
+          : el('section', { class: 'layout-day__story', 'aria-labelledby': 'stamp-day-story' }, [
+              el('h2', { id: 'stamp-day-story', text: 'El día' }),
+              htmlEl('div', { class: 'prose' }, desc),
+            ])
+        : null;
+
+      const highlights = stamp.highlights;
+      const highlightsBlock =
+        highlights && (highlights.good || highlights.rough)
+          ? el('div', { class: 'layout-day__highlights-grid' }, [
+              highlightPanel('good', highlights.good),
+              highlightPanel('rough', highlights.rough),
+            ].filter(Boolean))
+          : null;
+
+      const moments =
+        stamp.moments && stamp.moments.items && stamp.moments.items.length
+          ? el('section', { class: 'moments', 'aria-labelledby': 'stamp-moments' }, [
+              el('h2', { id: 'stamp-moments', text: stamp.moments.title || 'Momentos del día' }),
+              el(
+                'ol',
+                null,
+                stamp.moments.items.map((t) => el('li', null, [el('p', { text: t })]))
+              ),
+            ])
+          : null;
+
+      const routeBar =
+        from && to
+          ? el('p', { class: 'layout-day__route', 'aria-label': 'Ruta del día' }, [
+              el('span', { class: 'layout-day__endpoint', text: from }),
+              el('span', { class: 'layout-day__route-arrow', text: '→' }),
+              el('span', { class: 'layout-day__endpoint', text: to }),
+              distance ? el('span', { class: 'layout-day__distance', text: distance }) : null,
+            ].filter(Boolean))
+          : null;
+
+      const mapPhoto =
+        stamp.map && (stamp.map.src || stamp.map.label)
+          ? el('figure', { class: 'layout-day__map-wrap' }, [
+              el('p', { class: 'layout-day__label', text: 'Ruta del día' }),
+              photo(stamp.map, 'layout-day__map'),
+            ])
+          : null;
+
+      const facts =
+        stamp.facts && stamp.facts.length
+          ? el(
               'dl',
               { class: 'facts' },
               stamp.facts.flatMap((f) => [el('dt', { text: f.label }), el('dd', { text: f.value })])
-            ),
-            el('div', { class: 'secret' }, [
+            )
+          : null;
+
+      const secretBlock =
+        secret && secret.photo
+          ? el('div', { class: 'secret' }, [
               photo(secret.photo, 'photo--print'),
               el(
                 'button',
@@ -474,8 +525,19 @@
                 [el('span', { 'data-reveal-label': true, text: secret.button })]
               ),
               el('p', { class: 'secret__story handwritten', id: storyId, hidden: true, text: secret.story }),
-            ]),
-          ]),
+            ])
+          : null;
+
+      return el('article', { class: 'sheet paper layout-day', 'aria-labelledby': titleId }, [
+        photo(stamp.hero, 'layout-day__hero'),
+        el('header', { class: 'sheet__head layout-day__head' }, [
+          ...sheetHeader(stamp, titleId, stamp.heading),
+          stamp.date ? el('p', { class: 'sheet__date', text: stamp.date }) : null,
+          routeBar,
+        ]),
+        el('div', { class: 'layout-day__body' }, [
+          el('div', { class: 'layout-day__main' }, [descBlock, highlightsBlock, moments].filter(Boolean)),
+          el('aside', { class: 'layout-day__aside', 'aria-label': 'Datos del día' }, [mapPhoto, facts, secretBlock].filter(Boolean)),
         ]),
       ]);
     },
@@ -598,7 +660,6 @@
   function pendingSheet(stamp) {
     const titleId = 'stamp-title';
     return el('article', { class: 'sheet paper layout-pending', 'aria-labelledby': titleId }, [
-      stampArt(stamp, 'layout-pending__art'),
       ...sheetHeader(stamp, titleId, `Sello ${pad(stamp.id)}`),
       el('p', { class: 'layout-pending__text', text: 'Contenido pendiente' }),
     ]);

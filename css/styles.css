@@ -1210,9 +1210,108 @@ a.index__item .index__title {
   border-bottom: 1px solid var(--line);
 }
 
-.layout-day__head .sheet__stamp {
-  position: relative;
-  margin-top: -4.5rem;
+.layout-day__route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem 0.65rem;
+  margin: 0.85rem 0 0;
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 2.8vw, 1.45rem);
+}
+
+.layout-day__endpoint {
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.layout-day__route-arrow {
+  color: var(--terra);
+}
+
+.layout-day__distance {
+  padding: 0.2rem 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: rgba(72, 101, 135, 0.1);
+  border-radius: 999px;
+}
+
+.layout-day__story h2 {
+  margin-bottom: 0.85rem;
+  font-size: 1.6rem;
+}
+
+.layout-day__highlights-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+@media (min-width: 560px) {
+  .layout-day__highlights-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+  }
+}
+
+.layout-day__highlights {
+  padding: 1rem 1.1rem 1.05rem;
+  border-radius: var(--radius);
+}
+
+.layout-day__highlights--good {
+  background: rgba(107, 124, 86, 0.1);
+  border-left: 3px solid var(--olive);
+}
+
+.layout-day__highlights--rough {
+  background: rgba(164, 87, 63, 0.08);
+  border-left: 3px solid var(--terra);
+}
+
+.layout-day__highlights h3 {
+  margin: 0 0 0.65rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layout-day__highlights ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.layout-day__highlights li + li {
+  margin-top: 0.35rem;
+}
+
+.layout-day__main .moments {
+  margin-top: 1.75rem;
+}
+
+.layout-day__label {
+  margin: 0 0 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layout-day__map {
+  margin-bottom: 1.5rem;
 }
 
 .layout-day__body {
@@ -1578,9 +1677,13 @@ a.index__item .index__title {
   color: var(--ink-soft);
 }
 
+.index__item.is-draft,
+.is-draft .index__num,
+.is-draft .index__title,
 .index__item.is-draft .index__status {
   color: var(--ink-soft);
   font-weight: 400;
+  cursor: default;
 }
 
 /* Stamp layout: pending */
