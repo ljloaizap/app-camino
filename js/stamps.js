@@ -9,6 +9,19 @@
  *   <span class="text-marker">destaque tipo flecha</span>
  *
  *   photo: { src: 'assets/photos/13/archivo.jpg', alt: '…', ratio, label } — debajo de «Símbolo #»
+ *
+ * layout `experience` — experiencias vividas (capítulo Experiencias):
+ *   experienceType: etiqueta del tipo (ej. «Bellezas de la vida»)
+ *   headline: título editorial opcional (si falta, usa el título del sello)
+ *   intro: string o string[] opcional — párrafo breve antes de los momentos
+ *   experiences: 2–4 entradas, cada una con:
+ *     title?: nombre del momento (si falta y hay varias: «Momento 1», …)
+ *     date: fecha de la experiencia (texto libre, ej. «12 de junio de 2025»)
+ *     moment: { stage, place }
+ *     photo: { src, alt, ratio, label, caption? }
+ *     description: string[] o HTML (como `symbol`)
+ *     senses?: string[] — etiquetas opcionales
+ *     takeaway: { label?, text } — cierre de ese momento («Lo que me quedó»)
  */
 (function () {
   'use strict';
@@ -94,6 +107,67 @@
         text: '"YO SOY EL CAMINO, LA VERDAD Y LA VIDA"',
         attribution: 'JESÚS DE NAZARET - LA BIBLIA',
       },
+    },
+
+    27: {
+      status: 'ready',
+      layout: 'experience',
+      experienceType: 'Bellezas de la vida',
+      experiences: [
+        {
+          title: 'Pajaritos cantando',
+          date: '24 de abril de 2026',
+          moment: { stage: 'Sarria - Portomarín', place: 'Pensión Mar' },
+          photo: {
+            src: 'assets/photos/foto_bosque.jpg',
+            alt: '',
+            ratio: 'landscape',
+            label: 'Fotografía del momento 1',
+            caption: 'Pajaritos cantando',
+          },
+          description: ['Donec vulputate a sem sed rutrum. Mauris risus dui, volutpat id venenatis tincidunt, accumsan a enim.',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget lorem nisl. Mauris dui diam, faucibus quis ligula vel, tempor efficitur ante. Donec vulputate a sem sed rutrum. Mauris risus dui, volutpat id venenatis tincidunt, accumsan a enim. Duis auctor nibh vel eros rutrum euismod. Integer aliquet vel dolor quis malesuada.'
+          ],
+          takeaway: {
+            label: 'Lo que me quedó',
+            text: 'Nunc condimentum nunc quis ante ornare aliquet.',
+          },
+        },
+        {
+          title: '[Título del momento 2 pendiente]',
+          date: '[Fecha pendiente]',
+          moment: { stage: '[Etapa pendiente]', place: '[Lugar pendiente]' },
+          photo: {
+            src: null,
+            alt: '',
+            ratio: 'portrait',
+            label: 'Fotografía del momento 2',
+            caption: '[Pie de foto pendiente]',
+          },
+          description: ['[Texto personal pendiente.]'],
+          takeaway: {
+            label: 'Lo que me quedó',
+            text: '[Frase pendiente para el momento 2.]',
+          },
+        },
+        {
+          title: '[Título del momento 3 pendiente]',
+          date: '[Fecha pendiente]',
+          moment: { stage: '[Etapa pendiente]', place: '[Lugar pendiente]' },
+          photo: {
+            src: null,
+            alt: '',
+            ratio: 'square',
+            label: 'Fotografía del momento 3',
+            caption: '[Pie de foto pendiente]',
+          },
+          description: ['[Texto personal pendiente.]'],
+          takeaway: {
+            label: 'Lo que me quedó',
+            text: '[Frase pendiente para el momento 3.]',
+          },
+        },
+      ],
     },
   };
 })();

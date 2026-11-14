@@ -509,6 +509,90 @@
         ]),
       ]);
     },
+
+    experience(stamp) {
+      const titleId = 'stamp-title';
+      const headline = stamp.headline || stamp.title;
+
+      function experienceEntries() {
+        if (stamp.experiences && stamp.experiences.length) return stamp.experiences;
+        if (stamp.photo || stamp.description) {
+          return [
+            {
+              title: stamp.experienceTitle,
+              moment: stamp.moment,
+              photo: stamp.photo,
+              description: stamp.description,
+              senses: stamp.senses,
+              takeaway: stamp.takeaway,
+            },
+          ];
+        }
+        return [];
+      }
+
+      function descBlock(desc) {
+        if (!desc) return null;
+        return Array.isArray(desc)
+          ? el('div', { class: 'prose' }, desc.map((t) => el('p', { text: t })))
+          : htmlEl('div', { class: 'layout-experience__desc prose' }, desc);
+      }
+
+      function experienceItem(entry, index, total) {
+        const momento = entry.moment || {};
+        const momentoLine = [momento.stage, momento.place].filter(Boolean).join(' · ');
+        const senses =
+          entry.senses && entry.senses.length
+            ? el(
+                'ul',
+                { class: 'layout-experience__senses', 'aria-label': 'Sensaciones' },
+                entry.senses.map((s) => el('li', { text: s }))
+              )
+            : null;
+        const itemTitleId = `experience-${index + 1}`;
+        const itemLabel = entry.title || (total > 1 ? `Momento ${index + 1}` : null);
+        const takeaway = entry.takeaway;
+        const keepsake =
+          takeaway && takeaway.text
+            ? el('aside', { class: 'layout-experience__keepsake', 'aria-label': takeaway.label || 'Lo que me quedó' }, [
+                el('p', { class: 'layout-experience__label', text: takeaway.label || 'Lo que me quedó' }),
+                el('p', { class: 'handwritten layout-experience__takeaway', text: takeaway.text }),
+              ])
+            : null;
+
+        return el('article', { class: 'layout-experience__item', 'aria-labelledby': itemLabel ? itemTitleId : null }, [
+          itemLabel ? el('h2', { class: 'layout-experience__item-title', id: itemTitleId, text: itemLabel }) : null,
+          entry.date ? el('p', { class: 'layout-experience__date', text: entry.date }) : null,
+          el('div', { class: 'layout-experience__grid' }, [
+            el('div', { class: 'layout-experience__visual' }, [
+              entry.photo ? photo(entry.photo, 'layout-experience__photo photo--print') : null,
+              momentoLine
+                ? el('p', { class: 'layout-experience__moment handwritten', text: momentoLine })
+                : null,
+            ]),
+            el(
+              'div',
+              { class: 'layout-experience__story' },
+              [descBlock(entry.description), senses, keepsake].filter(Boolean)
+            ),
+          ]),
+        ]);
+      }
+
+      const entries = experienceEntries();
+      const intro = stamp.intro
+        ? Array.isArray(stamp.intro)
+          ? el('div', { class: 'layout-experience__intro prose' }, stamp.intro.map((t) => el('p', { text: t })))
+          : el('p', { class: 'layout-experience__intro prose', text: stamp.intro })
+        : null;
+
+      return el('article', { class: 'sheet paper layout-experience', 'aria-labelledby': titleId }, [
+        el('p', { class: 'layout-experience__badge', text: stamp.experienceType || stamp.title }),
+        el('header', { class: 'sheet__head layout-experience__head' }, sheetHeader(stamp, titleId, headline)),
+        intro,
+        el('div', { class: 'layout-experience__list' }, entries.map((entry, i) => experienceItem(entry, i, entries.length))),
+      ]);
+    },
   };
 
   function pendingSheet(stamp) {

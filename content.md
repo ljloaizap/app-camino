@@ -2,7 +2,7 @@
 
 Tabla maestra para capítulos y sellos (31). La app carga este archivo al iniciar (`js/content.js`): índice, credencial e hojas usan solo estos datos.
 
-Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pendiente + sello gráfico según el título). Los sellos **03**, **07** y **13** usan diseños completos en `js/stamps.js` (`stampPages`; el **13** usa layout `symbol`).
+Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pendiente + sello gráfico según el título). Los sellos **03**, **07** y **13** usan diseños completos en `js/stamps.js` (`stampPages`; el **13** usa layout `symbol`; el **27** usa layout `experience`).
 
 **Leyenda:** títulos entre corchetes son provisionales hasta que los completes tú.
 
@@ -34,7 +34,7 @@ Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pe
 | Amigos del Camino | 24 — Young Lady |
 | Amigos del Camino | 25 — Amigos por el mundo |
 | Experiencias | 26 — Reflexiones |
-| Experiencias | 27 — Belleza de la vida |
+| Experiencias | 27 — Bellezas de la vida |
 | Experiencias | 28 — Desafíos |
 | Experiencias | 29 — Anécdotas / Curiosidades |
 | Epílogo | 30 — El regreso: volver a casa |
