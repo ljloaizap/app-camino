@@ -2,7 +2,7 @@
 
 Tabla maestra para capítulos y sellos (31). La app carga este archivo al iniciar (`js/content.js`): índice, credencial e hojas usan solo estos datos.
 
-Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pendiente + sello gráfico según el título). Los sellos **03** y **07** usan diseños completos en `js/stamps.js` (`stampPages`).
+Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pendiente + sello gráfico según el título). Los sellos **03**, **07** y **13** usan diseños completos en `js/stamps.js` (`stampPages`; el **13** usa layout `symbol`).
 
 **Leyenda:** títulos entre corchetes son provisionales hasta que los completes tú.
 

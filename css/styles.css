@@ -13,6 +13,7 @@
 
   --ink-soft: #5e574d;
   --desk: #e7decf;
+  --desk-exit: #ddd2c0;
   --line: rgba(164, 155, 140, 0.6);
 
   --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -1306,6 +1307,122 @@ a.index__item .index__title {
   border-radius: 3px;
 }
 
+/* Stamp layout: symbol (Símbolos del Camino) */
+
+.layout-symbol__head {
+  text-align: center;
+}
+
+.layout-symbol__head .sheet__stamp {
+  float: none;
+  margin: 0 auto 0.75rem;
+}
+
+.layout-symbol__emblem {
+  width: clamp(112px, 20vw, 156px);
+}
+
+.layout-symbol__index {
+  margin-top: 0.15rem;
+}
+
+.layout-symbol__photo {
+  max-width: min(520px, 100%);
+  margin: 0.85rem auto 0;
+}
+
+.layout-symbol__body {
+  max-width: 46rem;
+  margin: 1.75rem auto 0;
+}
+
+.layout-symbol__desc {
+  margin: 0 0 1.75rem;
+  text-align: center;
+}
+
+.layout-symbol__desc strong {
+  font-weight: 700;
+  color: var(--charcoal);
+}
+
+.layout-symbol__desc .text-blue {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.layout-symbol__desc .text-terra {
+  color: var(--terra);
+  font-weight: 700;
+}
+
+.layout-symbol__desc .text-marker {
+  color: #9a7b1a;
+  font-weight: 700;
+}
+
+.layout-symbol__question {
+  margin: 0 0 1.75rem;
+  padding: 1.15rem 1.25rem 1.2rem;
+  text-align: center;
+  background: rgba(250, 247, 240, 0.75);
+  border-left: 3px solid var(--olive);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.layout-symbol__label {
+  margin: 0 0 0.5rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layout-symbol__question .layout-symbol__prompt {
+  max-width: none;
+  width: 100%;
+}
+
+.layout-symbol__prompt {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.45;
+  color: var(--blue);
+}
+
+.layout-symbol__quote {
+  margin: 0;
+  padding: 1.25rem 1.5rem 1.1rem;
+  text-align: center;
+  background: var(--ivory);
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px rgba(164, 155, 140, 0.35);
+}
+
+.layout-symbol__quote blockquote {
+  margin: 0;
+}
+
+.layout-symbol__quote blockquote p {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 3.2vw, 1.45rem);
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--charcoal);
+}
+
+.layout-symbol__cite {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terra);
+}
+
 /* Stamp layout: stub (placeholder page) */
 
 .layout-stub__head {
@@ -1602,6 +1719,195 @@ a.index__item .index__title {
   justify-content: center;
   gap: 0.75rem;
   margin-top: 2.5rem;
+}
+
+/* ---------- Access gate ---------- */
+
+body.is-locked main,
+body.is-locked .site-header,
+body.is-locked .sound-dock {
+  visibility: hidden;
+}
+
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(231, 222, 207, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.access-gate__panel {
+  width: min(420px, 100%);
+  padding: 2rem 1.75rem 1.85rem;
+  text-align: center;
+}
+
+.access-gate__title {
+  font-size: clamp(1.75rem, 5vw, 2.15rem);
+  font-weight: 500;
+}
+
+.access-gate__lead {
+  margin: 0.65rem 0 1.35rem;
+  color: var(--ink-soft);
+}
+
+.access-gate__form {
+  display: grid;
+  gap: 0.55rem;
+  text-align: left;
+}
+
+.access-gate__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.access-gate__input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  background: var(--ivory);
+  border: 1.5px solid rgba(38, 63, 86, 0.35);
+  border-radius: 6px;
+}
+
+.access-gate__input:focus-visible {
+  outline: 2px solid var(--terra);
+  outline-offset: 2px;
+}
+
+.access-gate__hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--gray);
+}
+
+.access-gate__submit {
+  margin-top: 0.35rem;
+  justify-self: center;
+}
+
+html:not([data-access='granted']) img {
+  visibility: hidden;
+}
+
+html[data-access='granted'] img {
+  visibility: visible;
+}
+
+.access-exit {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 30000;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background-color: var(--desk-exit);
+  box-shadow: inset 0 0 0 1px rgba(57, 54, 48, 0.07);
+  cursor: default;
+}
+
+body.page-cover .access-exit {
+  background-color: #d8cdb9;
+}
+
+/* ---------- En camino (denied) ---------- */
+
+.page-en-camino {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem 3rem;
+}
+
+.en-camino__card {
+  max-width: 520px;
+  padding: 2rem 1.75rem 2.25rem;
+  text-align: center;
+}
+
+.en-camino__scene {
+  margin: -0.5rem -0.75rem 1.25rem;
+  padding: 0.75rem 0.5rem 0.25rem;
+  color: var(--blue);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(250, 247, 240, 0.55), rgba(243, 235, 221, 0.2));
+  overflow: hidden;
+}
+
+.en-camino__sky {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.en-camino__walker {
+  animation: en-camino-walk 2.2s ease-in-out infinite;
+  transform-origin: 68px 92px;
+}
+
+.en-camino__leg--a {
+  animation: en-camino-leg-a 2.2s ease-in-out infinite;
+  transform-origin: 68px 92px;
+}
+
+.en-camino__leg--b {
+  animation: en-camino-leg-b 2.2s ease-in-out infinite;
+  transform-origin: 68px 92px;
+}
+
+@keyframes en-camino-walk {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(48px) translateY(-2px);
+  }
+}
+
+@keyframes en-camino-leg-a {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes en-camino-leg-b {
+  0%,
+  100% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+}
+
+.en-camino__text {
+  max-width: 38ch;
+  margin: 0 auto 0.85rem;
+  color: var(--ink-soft);
+}
+
+.en-camino__text--soft {
+  font-size: 0.95rem;
+  color: var(--gray);
 }
 
 /* ---------- Reduced motion ---------- */

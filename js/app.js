@@ -7,6 +7,12 @@
   const pad = (n) => String(n).padStart(2, '0');
   const param = (name) => new URLSearchParams(window.location.search).get(name);
 
+  function htmlEl(tag, props, html) {
+    const node = el(tag, props);
+    node.innerHTML = html;
+    return node;
+  }
+
   function el(tag, props, children) {
     const node = document.createElement(tag);
     if (props) {
@@ -76,8 +82,9 @@
     if (page && page.status === 'ready') {
       const stamp = Object.assign({ id, title, status: 'ready' }, page);
       if (stamp.layout === 'day' && !stamp.heading) stamp.heading = title;
-      stamp.art = Object.assign({}, motif, stamp.art, {
-        bottom: stamp.art.bottom === 'Sello' ? `Sello ${pad(id)}` : stamp.art.bottom || motif.bottom,
+      const pageArt = stamp.art || {};
+      stamp.art = Object.assign({}, motif, pageArt, {
+        bottom: pageArt.bottom === 'Sello' ? `Sello ${pad(id)}` : pageArt.bottom || motif.bottom,
       });
       return stamp;
     }
@@ -466,6 +473,37 @@
         ]),
       ]);
     },
+
+    symbol(stamp) {
+      const titleId = 'stamp-title';
+      const name = stamp.name || stamp.title;
+      const symbolLabel = stamp.symbolNumber ? `Símbolo ${stamp.symbolNumber}` : 'Símbolo';
+      const quote = stamp.quote || {};
+
+      const headChildren = [
+        stampArt(stamp, 'layout-symbol__emblem sheet__stamp'),
+        ...sheetHeader(stamp, titleId, name),
+        el('p', { class: 'layout-symbol__index sheet__subtitle', text: symbolLabel }),
+      ];
+      if (stamp.photo) headChildren.push(photo(stamp.photo, 'layout-symbol__photo'));
+
+      return el('article', { class: 'sheet paper layout-symbol', 'aria-labelledby': titleId }, [
+        el('header', { class: 'layout-symbol__head sheet__head' }, headChildren),
+        el('div', { class: 'layout-symbol__body' }, [
+          htmlEl('div', { class: 'layout-symbol__desc prose' }, stamp.description),
+          el('section', { class: 'layout-symbol__question', 'aria-labelledby': 'symbol-question' }, [
+            el('h2', { id: 'symbol-question', class: 'layout-symbol__label', text: 'Para reflexionar' }),
+            el('p', { class: 'layout-symbol__prompt handwritten', text: stamp.question }),
+          ]),
+          el('figure', { class: 'layout-symbol__quote', 'aria-label': 'Cita' }, [
+            el('blockquote', null, [el('p', { text: quote.text })]),
+            quote.attribution
+              ? el('figcaption', { class: 'layout-symbol__cite', text: quote.attribution })
+              : null,
+          ]),
+        ]),
+      ]);
+    },
   };
 
   function pendingSheet(stamp) {
@@ -657,10 +695,6 @@
 
   async function navigate(href, push) {
     const url = new URL(href, window.location.href);
-    if (url.pathname.endsWith('credential.html') && !url.searchParams.has('leaf')) {
-      const stored = parseLeafNumber(sessionStorage.getItem(LEAF_KEY));
-      if (stored) url.searchParams.set('leaf', String(stored));
-    }
     let doc;
     try {
       doc = await fetchPage(url);
@@ -702,6 +736,11 @@
   }
 
   async function init() {
+    if (C.requireAccess) {
+      const allowed = await C.requireAccess();
+      if (!allowed) return;
+    }
+
     initReveal();
     initKeyboardPager();
     initRouter();
