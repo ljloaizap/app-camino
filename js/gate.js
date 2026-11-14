@@ -10,6 +10,7 @@
   const STORAGE_KEY = 'camino.access';
   const LEAF_KEY = 'camino.credentialLeaf';
   const DENIED_PAGE = 'en-camino.html';
+  const LOGOUT_PAGE = 'logout.html';
 
   function pageIs(name) {
     const path = window.location.pathname;
@@ -23,12 +24,16 @@
   }
 
   function isAuthorized() {
-    return sessionStorage.getItem(STORAGE_KEY) === ACCESS_UUID;
+    return (
+      localStorage.getItem(STORAGE_KEY) === ACCESS_UUID ||
+      sessionStorage.getItem(STORAGE_KEY) === ACCESS_UUID
+    );
   }
 
   function grant(code) {
     if (normalizeCode(code) !== ACCESS_UUID) return false;
-    sessionStorage.setItem(STORAGE_KEY, ACCESS_UUID);
+    localStorage.setItem(STORAGE_KEY, ACCESS_UUID);
+    sessionStorage.removeItem(STORAGE_KEY);
     return true;
   }
 
@@ -128,33 +133,48 @@
   }
 
   function clearAccess() {
+    localStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(LEAF_KEY);
     delete document.documentElement.dataset.access;
+    document.body.classList.add('is-locked');
+    const gate = document.querySelector('.access-gate');
+    if (gate) gate.remove();
   }
 
-  function installStealthLogout() {
-    if (document.querySelector('.access-exit')) return;
+  function logoutAndRedirect() {
+    clearAccess();
+    window.location.replace('index.html');
+  }
 
-    const hit = document.createElement('button');
-    hit.type = 'button';
-    hit.className = 'access-exit';
-    hit.setAttribute('aria-hidden', 'true');
-    hit.tabIndex = -1;
-
-    hit.addEventListener('dblclick', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      clearAccess();
-      const base = window.location.href.replace(/[^/]*$/, '');
-      window.location.assign(`${base}index.html`);
+  function guardAccess() {
+    if (pageIs(LOGOUT_PAGE) || pageIs(DENIED_PAGE)) return Promise.resolve(false);
+    if (isAuthorized()) {
+      unlockUi();
+      return Promise.resolve(true);
+    }
+    return new Promise((resolve) => {
+      showGate();
+      const onUnlock = () => {
+        window.removeEventListener('camino:unlocked', onUnlock);
+        resolve(true);
+      };
+      window.addEventListener('camino:unlocked', onUnlock);
     });
-
-    document.body.append(hit);
   }
+
+  C.isAccessGranted = isAuthorized;
+  C.clearAccess = clearAccess;
+  C.guardAccess = guardAccess;
 
   C.requireAccess = function requireAccess() {
     return new Promise((resolve) => {
+      if (pageIs(LOGOUT_PAGE)) {
+        logoutAndRedirect();
+        resolve(false);
+        return;
+      }
+
       if (pageIs(DENIED_PAGE)) {
         if (isAuthorized()) {
           window.location.replace('index.html');
@@ -181,10 +201,18 @@
     });
   };
 
-  function bootStealth() {
-    installStealthLogout();
-  }
+  window.addEventListener('storage', (event) => {
+    if (event.key !== STORAGE_KEY || event.newValue) return;
+    clearAccess();
+    if (!pageIs(LOGOUT_PAGE) && !pageIs(DENIED_PAGE)) showGate();
+  });
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootStealth);
-  else bootStealth();
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted && !isAuthorized()) {
+      clearAccess();
+      showGate();
+    }
+  });
+
+  if (pageIs(LOGOUT_PAGE)) logoutAndRedirect();
 })();

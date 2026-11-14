@@ -111,7 +111,13 @@
   /* ---------- Components ---------- */
 
   function photo(p, extraClass) {
-    const fig = el('figure', { class: `photo photo--${p.ratio || 'landscape'}${extraClass ? ` ${extraClass}` : ''}` });
+    const fit = extraClass === 'layout-symbol__photo';
+    const fig = el(
+      'figure',
+      {
+        class: `photo${fit ? ' photo--fit' : ` photo--${p.ratio || 'landscape'}`}${extraClass ? ` ${extraClass}` : ''}`,
+      }
+    );
     if (p.src) {
       fig.append(el('img', { src: p.src, alt: p.alt || '', loading: 'lazy', decoding: 'async' }));
     } else {
@@ -481,7 +487,6 @@
       const quote = stamp.quote || {};
 
       const headChildren = [
-        stampArt(stamp, 'layout-symbol__emblem sheet__stamp'),
         ...sheetHeader(stamp, titleId, name),
         el('p', { class: 'layout-symbol__index sheet__subtitle', text: symbolLabel }),
       ];
@@ -704,7 +709,18 @@
     }
     if (push) window.history.pushState(null, '', url.href);
     swapDocument(doc);
+    if (C.guardAccess) {
+      const allowed = await C.guardAccess();
+      if (!allowed) return;
+    }
+    try {
+      if (!C.contentReady) await C.loadContent();
+    } catch (err) {
+      showContentError('No se pudo cargar content.md. Comprueba que el archivo exista en el servidor.');
+      return;
+    }
     initPage();
+    C.art.hydrate(document);
 
     window.scrollTo(0, 0);
     const main = document.querySelector('main');
@@ -736,7 +752,10 @@
   }
 
   async function init() {
-    if (C.requireAccess) {
+    if (C.guardAccess) {
+      const allowed = await C.guardAccess();
+      if (!allowed) return;
+    } else if (C.requireAccess) {
       const allowed = await C.requireAccess();
       if (!allowed) return;
     }

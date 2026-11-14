@@ -16,7 +16,7 @@
 
   C.stampPages = {
     3: {
-      status: 'ready',
+      status: 'draft',
       layout: 'prep',
       editorialTitle: 'El cuerpo también hace el Camino',
       art: { shape: 'circle', icon: 'boot', top: 'Preparación', bottom: 'Sello', color: 'blue' },
@@ -33,7 +33,7 @@
     },
 
     7: {
-      status: 'ready',
+      status: 'draft',
       layout: 'day',
       date: '[Fecha pendiente]',
       art: {
@@ -80,7 +80,7 @@
         label: 'Flecha amarilla',
       },
       description: [
-        'Nos indican la <strong>dirección del Camino</strong> y de no ser por ellas, a veces no sabríamos a dónde ir.',
+        'Nos indican la <strong>dirección</strong> del Camino y de no ser por ellas, a veces no sabríamos a dónde ir.',
         'Al encontrarlas, recuperamos la <span class="text-blue">confianza</span> de saber que vamos en la dirección correcta.',
         '<br />',
         '<br />',
