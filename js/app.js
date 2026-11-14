@@ -40,6 +40,30 @@
     return index === -1 ? 0 : index;
   }
 
+  const LEAF_KEY = 'camino.credentialLeaf';
+
+  function parseLeafNumber(value) {
+    const n = parseInt(value, 10);
+    return Number.isInteger(n) && n >= 1 ? n : null;
+  }
+
+  function credentialLeafForReturn(stampId) {
+    return (
+      parseLeafNumber(param('fromLeaf')) ||
+      parseLeafNumber(sessionStorage.getItem(LEAF_KEY)) ||
+      leafOf(stampId) + 1
+    );
+  }
+
+  function credentialHref(stampId) {
+    return `credential.html?leaf=${credentialLeafForReturn(stampId)}`;
+  }
+
+  function stampHref(id) {
+    const fromLeaf = parseLeafNumber(param('fromLeaf'));
+    return fromLeaf ? `stamp.html?id=${id}&fromLeaf=${fromLeaf}` : `stamp.html?id=${id}`;
+  }
+
   function getStamp(id) {
     const meta = C.catalogMeta && C.catalogMeta(id);
     if (!meta) return { id, status: 'pending', title: 'Este sello no existe' };
@@ -195,11 +219,12 @@
 
   /* ---------- Credential ---------- */
 
-  function slot(id) {
+  function slot(id, leafIndex) {
     const stamp = getStamp(id);
+    const fromLeaf = leafIndex != null ? `&fromLeaf=${leafIndex + 1}` : '';
     return el('li', { class: `slot${stamp.status === 'ready' ? ' slot--ready' : ' slot--pending'}` }, [
       stamp.status === 'ready'
-        ? el('a', { class: 'slot__link', href: `stamp.html?id=${id}` }, [
+        ? el('a', { class: 'slot__link', href: `stamp.html?id=${id}${fromLeaf}` }, [
             el('span', { class: 'slot__num', text: pad(id) }),
             stampArt(stamp, 'slot__art'),
             el('span', { class: 'slot__title', text: stamp.title }),
@@ -220,7 +245,7 @@
         el('p', { class: 'kicker', text: chapter.number ? `Capítulo ${chapter.number}` : 'Capítulo' }),
         el('h2', { class: 'leaf__title', id: titleId, text: chapter.title }),
       ]),
-      el('ul', { class: 'leaf__grid', 'data-count': String(ids.length) }, ids.map(slot)),
+      el('ul', { class: 'leaf__grid', 'data-count': String(ids.length) }, ids.map((stampId) => slot(stampId, index))),
       el('footer', { class: 'leaf__foot', text: String(index + 1) }),
     ]);
   }
@@ -255,9 +280,9 @@
 
       const isLast = current + step() >= total;
       prev.disabled = current === 0;
-      const nextLabel = isLast ? 'Despedida' : 'Siguiente';
+      const nextLabel = isLast ? 'Dedicatoria' : 'Siguiente';
       if (nextHint) nextHint.textContent = nextLabel;
-      next.setAttribute('aria-label', isLast ? 'Ir a la despedida' : 'Hoja siguiente');
+      next.setAttribute('aria-label', isLast ? 'Ir a la dedicatoria' : 'Hoja siguiente');
       prev.setAttribute('aria-label', current === 0 ? 'Primera hoja' : 'Hoja anterior');
 
       const last = Math.min(current + step(), total);
@@ -265,6 +290,7 @@
         last - current > 1 ? `Hojas ${current + 1}–${last} de ${total}` : `Hoja ${current + 1} de ${total}`;
 
       window.history.replaceState(null, '', `?leaf=${current + 1}`);
+      sessionStorage.setItem(LEAF_KEY, String(current + 1));
       if (animate) animateIn(spread);
     }
 
@@ -275,7 +301,7 @@
 
     next.addEventListener('click', () => {
       if (current + step() >= total) {
-        navigate('farewell.html', true);
+        navigate('dedication.html', true);
         return;
       }
       current = normalize(current + step());
@@ -469,11 +495,11 @@
   }
 
   function stampShell(sheet, id) {
-    const leafHref = `credential.html?leaf=${leafOf(id) + 1}`;
-    const prevHref = id > 1 ? `stamp.html?id=${id - 1}` : leafHref;
-    const nextHref = id < C.TOTAL_STAMPS ? `stamp.html?id=${id + 1}` : 'farewell.html';
+    const leafHref = credentialHref(id);
+    const prevHref = id > 1 ? stampHref(id - 1) : leafHref;
+    const nextHref = id < C.TOTAL_STAMPS ? stampHref(id + 1) : 'dedication.html';
     const prevAria = id > 1 ? `Sello anterior (${pad(id - 1)})` : 'Volver a la credencial';
-    const nextAria = id < C.TOTAL_STAMPS ? `Sello siguiente (${pad(id + 1)})` : 'Ir a la despedida';
+    const nextAria = id < C.TOTAL_STAMPS ? `Sello siguiente (${pad(id + 1)})` : 'Ir a la dedicatoria';
 
     return el('div', { class: 'stamp__viewer' }, [
       stampEdge('prev', prevHref, prevAria),
@@ -631,6 +657,10 @@
 
   async function navigate(href, push) {
     const url = new URL(href, window.location.href);
+    if (url.pathname.endsWith('credential.html') && !url.searchParams.has('leaf')) {
+      const stored = parseLeafNumber(sessionStorage.getItem(LEAF_KEY));
+      if (stored) url.searchParams.set('leaf', String(stored));
+    }
     let doc;
     try {
       doc = await fetchPage(url);

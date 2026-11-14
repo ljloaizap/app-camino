@@ -26,7 +26,7 @@ credential.html         # Credencial abierta + anterior/siguiente (?leaf=N)
 stamp-index.html        # Índice de 31 sellos por capítulos
 stamp.html              # Plantilla única (?id=5, ?id=13, …)
 album.html              # Recuerdos del Camino (estructura inicial)
-farewell.html           # Despedida + sello de amistad
+dedication.html         # Dedicatoria + sello de amistad
 css/
   styles.css            # tokens, textura papel, layout, componentes, responsive, a11y
 js/
@@ -100,10 +100,10 @@ Nombres de archivos, código, clases, ids y comentarios en inglés. Español sol
 - El reproductor se prepara en silencio al cargar; suena con el primer clic («Activar sonido» o «Abrir credencial»).
 - Navegación interna sin recarga: el audio nunca se interrumpe. Solo F5 o abrir una URL directa lo detienen.
 
-### Fase G — Álbum y despedida (andamiaje)
+### Fase G — Álbum y dedicatoria (andamiaje)
 
 - «Recuerdos del Camino»: una o dos categorías placeholder, ampliar foto + caption cuando existan.
-- Despedida y sello de amistad (fuera de los 31): solo placeholders.
+- Dedicatoria y sello de amistad (fuera de los 31): solo placeholders.
 
 ### Fase H — Aceptación y pulido
 
@@ -123,7 +123,7 @@ Nombres de archivos, código, clases, ids y comentarios en inglés. Español sol
 7. Vieira interactiva con contenido oculto de ejemplo.
 8. Reproductor YouTube con activación manual.
 9. Estructura inicial del álbum.
-10. Despedida provisional.
+10. Dedicatoria provisional.
 
 ## Fuera de alcance (esta entrega)
 

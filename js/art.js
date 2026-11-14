@@ -194,6 +194,58 @@
     );
   }
 
+  /** Minimal vieira for ink-stamp motifs (Galician credential seals). */
+  function miniVieira(cx, cy, size) {
+    const s = size / 20;
+    return (
+      `<g transform="translate(${r1(cx)} ${r1(cy)}) scale(${r1(s)})" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">` +
+      '<path d="M0 8c-5-4-6-9-4-12 3 0 5 1.5 6.5 3.5 1.5-2 3.5-3.5 6.5-3.5 2 3 1 8-4 12Z" fill="currentColor" fill-opacity=".14"/>' +
+      '<path d="M0 2v14M-4 5l4-3 4 3" fill="none"/>' +
+      '</g>'
+    );
+  }
+
+  /**
+   * Landscape credential seal (albergue / ayuntamiento style):
+   * double frame, route header, cross + shell (Sarria municipal motif), etapa and K.111.
+   */
+  function jacobeanStamp(o, label) {
+    const w = 168;
+    const h = 104;
+    const cx = w / 2;
+    const route = String(o.route || o.top || 'Camino de Santiago');
+    const from = String(o.from || 'Sarria');
+    const to = String(o.to || 'Portomarín');
+    const day = String(o.day || '1');
+    const km = o.km != null ? String(o.km) : 'K.111';
+
+    return (
+      open(w, h, label, o.color) +
+      '<g filter="url(#ink)" fill="none" stroke="currentColor">' +
+      `<rect x="3" y="3" width="162" height="98" rx="12" stroke-width="2.6"/>` +
+      `<rect x="9" y="9" width="150" height="86" rx="8" stroke-width="1"/>` +
+      `<text x="${cx}" y="23" text-anchor="middle" font-size="7.2" letter-spacing="2.4" fill="currentColor" stroke="none">${esc(
+        route.toUpperCase()
+      )}</text>` +
+      `<path d="M22 28H${w - 22}" stroke-width=".85"/>` +
+      `<path d="M${cx} 36v22M${cx - 12} 46h24" stroke-width="1.45"/>` +
+      `<circle cx="${cx}" cy="47" r="10.5" stroke-width=".9"/>` +
+      miniVieira(cx, 47, 11) +
+      `<text x="${cx}" y="70" text-anchor="middle" font-size="7.8" letter-spacing="1.6" fill="currentColor" stroke="none">${esc(
+        `${from.toUpperCase()}  ·  ${to.toUpperCase()}`
+      )}</text>` +
+      `<path d="M22 76H${w - 22}" stroke-width=".75" stroke-dasharray="2.5 3"/>` +
+      `<text class="art-serif" x="${cx}" y="90" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">${esc(
+        `Día ${day}`
+      )}</text>` +
+      (km
+        ? `<text x="15" y="98" font-size="6.8" letter-spacing="0.5" fill="currentColor" stroke="none">${esc(km)}</text>`
+        : '') +
+      `<text x="${w - 14}" y="98" text-anchor="end" font-size="6.5" letter-spacing="1.8" fill="currentColor" fill-opacity=".88" stroke="none">· · · / · · ·</text>` +
+      '</g></svg>'
+    );
+  }
+
   function rectStamp(o, label) {
     return (
       open(150, 110, label, o.color) +
@@ -273,7 +325,13 @@
     );
   }
 
-  const SHAPES = { circle: circleStamp, rect: rectStamp, scallop: scallopStamp, pending: pendingStamp };
+  const SHAPES = {
+    circle: circleStamp,
+    rect: rectStamp,
+    scallop: scallopStamp,
+    jacobean: jacobeanStamp,
+    pending: pendingStamp,
+  };
 
   function stamp(config, label) {
     const render = SHAPES[config && config.shape] || pendingStamp;

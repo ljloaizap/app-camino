@@ -25,7 +25,7 @@ La web tendrá cinco grandes componentes:
 2. Credencial interactiva con 31 sellos.
 3. Contenido personal y práctico asociado a cada sello.
 4. Álbum independiente de recuerdos del Camino.
-5. Despedida y sello especial de amistad.
+5. Dedicatoria y sello especial de amistad.
 
 La visitante debe sentir que está explorando una credencial real que alguien utilizó durante su peregrinación, no navegando por una web convencional.
 
@@ -206,9 +206,9 @@ La galería debe permitir ampliar las fotografías y mostrar captions o pequeña
 
 Evitar duplicar innecesariamente las fotografías que ya aparecen en los sellos.
 
-## 6. Despedida y sello de amistad
+## 6. Dedicatoria y sello de amistad
 
-Al terminar la credencial, mostrar una despedida personal y un sello especial de amistad.
+Al terminar la credencial, mostrar una dedicatoria personal y un sello especial de amistad.
 
 No forma parte de los 31 sellos.
 
@@ -222,7 +222,7 @@ Buscar un equilibrio entre legibilidad y simplicidad.
 
 No quiero un único HTML gigantesco con todo embebido, pero tampoco una arquitectura empresarial fragmentada en decenas de archivos.
 
-Puede usarse **varias páginas HTML** (por ejemplo portada, credencial, índice, plantilla de sello, álbum, despedida) si mantiene los archivos legibles. El contenido de los 31 sellos debe vivir en `content.md` (capítulos y títulos) y, por sello desarrollado, en `js/stamps.js` (`stampPages`), sin duplicar como marcado masivo en HTML.
+Puede usarse **varias páginas HTML** (por ejemplo portada, credencial, índice, plantilla de sello, álbum, dedicatoria) si mantiene los archivos legibles. El contenido de los 31 sellos debe vivir en `content.md` (capítulos y títulos) y, por sello desarrollado, en `js/stamps.js` (`stampPages`), sin duplicar como marcado masivo en HTML.
 
 Como punto de partida, considerar:
 
@@ -279,7 +279,7 @@ Primero construir una versión funcional que incluya:
 7. Vieira interactiva con contenido oculto de ejemplo.
 8. Reproductor de sonido ambiental integrado con YouTube, con funcionalidad de  activación manual.
 9. Estructura inicial del álbum de recuerdos.
-10. Despedida provisional.
+10. Dedicatoria provisional.
 
 El diseño debe permitir ampliar progresivamente el proyecto sin reescribir la aplicación.
 

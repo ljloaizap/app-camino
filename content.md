@@ -8,8 +8,8 @@ Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pe
 
 | Capítulo | Sello |
 | --- | --- |
-| ¿Quejeso? | 01 — ¿Qué es "El Camino de Santiago"?|
-| ¿Quejeso? | 02 — ¿Quién es Santiago?|
+| Bienvenida | 01 — ¿Qué es "El Camino de Santiago"?|
+| Bienvenida | 02 — ¿Quién es Santiago?|
 | Preparando al peregrino | 03 — Preparación física, mental y espiritual |
 | Preparando al peregrino | 04 — Presupuesto / Gastos |
 | Preparando al peregrino | 05 — Equipaje |
@@ -42,6 +42,6 @@ Todos los sellos abren una página: la mayoría es **borrador** (foto + texto pe
 
 ---
 
-*Fuera de esta tabla:* sello de amistad (despedida), no cuenta entre los 31.
+*Fuera de esta tabla:* sello de amistad (dedicatoria), no cuenta entre los 31.
 
 *Hojas de la credencial:* **cada capítulo empieza en hoja nueva**. Dentro del capítulo, **2 a 4 sellos por hoja**, repartiendo lo más parejo posible; si no cuadra, las primeras hojas llevan más. Opcional: `### Hojas` para orden manual.

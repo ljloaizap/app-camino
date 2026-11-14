@@ -1554,49 +1554,49 @@ a.index__item .index__title {
   background: var(--blue);
 }
 
-/* ---------- Farewell ---------- */
+/* ---------- Dedication ---------- */
 
-.farewell {
+.dedication {
   max-width: 780px;
   margin: 0 auto;
   padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3.5rem);
   text-align: center;
 }
 
-.farewell h1 {
+.dedication h1 {
   font-size: clamp(2.1rem, 5.5vw, 3.2rem);
   font-weight: 500;
 }
 
-.farewell__text {
+.dedication__text {
   max-width: 56ch;
   margin: 1.25rem auto 0;
 }
 
-.farewell__seal {
+.dedication__seal {
   margin: 2.5rem auto 0;
 }
 
-.farewell__stamp {
+.dedication__stamp {
   display: block;
   width: 180px;
   margin: 0 auto 1rem;
   transform: rotate(-6deg);
 }
 
-.farewell__stamp svg {
+.dedication__stamp svg {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.farewell__seal figcaption {
+.dedication__seal figcaption {
   font-family: var(--hand);
   font-size: 1.5rem;
   color: var(--terra);
 }
 
-.farewell__links {
+.dedication__links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

@@ -28,7 +28,15 @@
       status: 'ready',
       layout: 'day',
       date: '[Fecha pendiente]',
-      art: { shape: 'rect', icon: 'arrow', top: 'El Camino', label: 'Día 1', color: 'terra' },
+      art: {
+        shape: 'jacobean',
+        color: 'terra',
+        route: 'Camino de Santiago',
+        from: 'Sarria',
+        to: 'Portomarín',
+        day: '1',
+        km: 'K.111',
+      },
       hero: { src: null, alt: '', ratio: 'panorama', label: 'Fotografía panorámica del día' },
       moments: {
         title: 'Momentos del día',
